@@ -1,17 +1,9 @@
 import React, { useMemo } from "react";
-import { TableRow, TableCell } from '@carbon/react';
 import TableWrapper from "../../table-wrapper/table-wrapper.component";
-import styles from '../../table-wrapper/table-wrapper.scss';
+import TableRowMapper from "../../table-wrapper/table-row-mapper.component";
+import { getCell } from "../../../utils/utils";
 
 const Moh240PageSummary: React.FC = () => {
-    const getCell = (key = "", value = "", colSpan = 1, rowSpan = 1, strong = false) => ({
-        key,
-        value,
-        strong,
-        colSpan,
-        rowSpan
-    });
-
     const tableRows = useMemo(() => {
         return [
             {
@@ -96,15 +88,7 @@ const Moh240PageSummary: React.FC = () => {
 
 
     return <TableWrapper>
-        {tableRows.map((tR) => (
-            <TableRow>
-                {tR.tableCells.map((tC) => (
-                    <TableCell className={styles.dataCell} colSpan={tC.colSpan} {...({ rowSpan: tC.rowSpan } as any)}>
-                        {tC.strong ? <strong>{tC.value}</strong> : tC.value}
-                    </TableCell>
-                ))}
-            </TableRow>
-        ))}
+        <TableRowMapper tableRows={tableRows} />
     </TableWrapper>
 }
 

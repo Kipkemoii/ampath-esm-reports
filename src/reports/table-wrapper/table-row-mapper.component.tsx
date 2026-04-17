@@ -29,7 +29,7 @@ const TableRowMapper: React.FC<TableRowMapperProps> = ({ tableRows, data }) => {
                         }
                     };
 
-                    return <TableCell className={styles.dataCell} colSpan={tC.colSpan} key={i} onClick={onClick}>
+                    return <TableCell className={styles.dataCell} colSpan={tC.colSpan} key={i} onClick={onClick} {...({ rowSpan: tC.rowSpan } as any)}>
                         {tC.label ? (tC.strong ? <strong>{tC.label}</strong> : tC.label) : value}
                     </TableCell>
 
