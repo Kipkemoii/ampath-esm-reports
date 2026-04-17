@@ -21,6 +21,9 @@ const ReportsDashboard: React.FC<ReportsDashboardProps> = () => {
         <ClickableTile onClick={() => navigate('/moh-706')} className={styles.tile}>
           MOH-706 REPORT
         </ClickableTile>
+        <ClickableTile onClick={() => navigate('/moh-505')} className={styles.tile}>
+          MOH-505 REPORT
+        </ClickableTile>
       </div>
     </>
   );
