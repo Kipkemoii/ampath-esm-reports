@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ReportFiltersComponent from '../../common/report-filters/report-filters.component';
 
 import styles from './moh-710.scss';
@@ -11,6 +12,7 @@ const Moh710Report: React.FC = () => {
   let errorMessage: string = '';
   const [moh710Data, setMoh710Data] = useState<any>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const session = useSession();
   const locationUuids = session?.sessionLocation?.uuid;
@@ -93,7 +95,7 @@ const Moh710Report: React.FC = () => {
             <tbody>
               <tr>
                 <td>BCG doses Administered</td>
-                <td>{moh710Data.bcg_vaccine_age_less_than_1yr}</td>
+                <td onClick={() => navigate('/moh-710-patient-list')}>{moh710Data.bcg_vaccine_age_less_than_1yr}</td>
                 <td>{moh710Data.bcg_vaccine_age_greater_than_1yr}</td>
               </tr>
               <tr>

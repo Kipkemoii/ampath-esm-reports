@@ -6,19 +6,23 @@ import classNames from 'classnames';
 import { useSession } from '@openmrs/esm-framework';
 import { Loading } from '@carbon/react';
 import { getMoh745 } from '../../resources/moh-745.resource';
+import { useNavigate } from 'react-router-dom';
+import { type ReportFilters } from '../moh-705a/type';
 
 const Moh745Component: React.FC = () => {
   let errorMessage: string = '';
   const [moh745Data, setMoh745Data] = useState<any>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
 
   const session = useSession();
   const locationUuids = session?.sessionLocation?.uuid;
 
-  const fetchMoh745ReportData = async (filters: { startDate?: string; endDate?: string; month?: string }) => {
-    setIsLoading(true);
-    let startDate = filters.startDate;
-    let endDate = filters.endDate;
+  const navigate = useNavigate();
+
+  const getReportParams = (filters: ReportFilters) => {
+    let { startDate: sDate, endDate: eDate } = filters;
 
     if (filters.month) {
       const [year, monthIndex] = filters.month.split('-').map(Number);
@@ -27,15 +31,26 @@ const Moh745Component: React.FC = () => {
       const end = new Date(year, monthIndex, 0);
 
       const formatLocalDate = (d: Date) => {
-        const year = d.getFullYear();
-        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
         const day = String(d.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
+        return `${y}-${m}-${day}`;
       };
 
-      startDate = formatLocalDate(start);
-      endDate = formatLocalDate(end);
+      sDate = formatLocalDate(start);
+      eDate = formatLocalDate(end);
     }
+
+    setStartDate(sDate || '');
+    setEndDate(eDate || '');
+
+    return { startDate: sDate, endDate: eDate };
+  };
+
+  const fetchMoh745ReportData = async (filters: { startDate?: string; endDate?: string; month?: string }) => {
+    setIsLoading(true);
+
+    const { startDate, endDate } = getReportParams(filters);
 
     const params = {
       locationUuids: locationUuids || '',
@@ -45,8 +60,6 @@ const Moh745Component: React.FC = () => {
     try {
       const data = await getMoh745(params);
       const flatData = Object.assign({}, ...data.result);
-      // eslint-disable-next-line no-console
-      console.log('MOH-745 Report Data:', flatData);
       setMoh745Data(flatData);
       setIsLoading(false);
     } catch (error) {
@@ -54,6 +67,12 @@ const Moh745Component: React.FC = () => {
       setIsLoading(false);
       throw new Error(`Failed to fetch MOH-745 report data: ${error instanceof Error ? error.message : String(error)}`);
     }
+  };
+
+  const navigateToRegister = (indicator?: string) => {
+    navigate(
+      `/moh-412-register?startDate=${startDate}&endDate=${endDate}&locationUuids=${locationUuids}&indicator=${indicator}`,
+    );
   };
   return (
     <>
@@ -160,51 +179,105 @@ const Moh745Component: React.FC = () => {
           <tbody>
             <tr>
               <td>1 a) Number of clients who received VIA or VIA/VILLI Screening</td>
-              <td>{moh745Data.via_villi_less_25_initial_screening}</td>
-              <td>{moh745Data.via_villi_25_49_initial_screening}</td>
-              <td>{moh745Data.via_villi_50_above_initial_screening}</td>
+              <td onClick={() => navigateToRegister('via_villi_less_25_initial_screening')}>
+                {moh745Data.via_villi_less_25_initial_screening}
+              </td>
+              <td onClick={() => navigateToRegister('via_villi_25_49_initial_screening')}>
+                {moh745Data.via_villi_25_49_initial_screening}
+              </td>
+              <td onClick={() => navigateToRegister('via_villi_50_above_initial_screening')}>
+                {moh745Data.via_villi_50_above_initial_screening}
+              </td>
               <td></td>
-              <td>{moh745Data.via_villi_less_25_routine_screening}</td>
-              <td>{moh745Data.via_villi_25_49_routine_screening}</td>
-              <td>{moh745Data.via_villi_50_above_routine_screening}</td>
+              <td onClick={() => navigateToRegister('via_villi_less_25_routine_screening')}>
+                {moh745Data.via_villi_less_25_routine_screening}
+              </td>
+              <td onClick={() => navigateToRegister('via_villi_25_49_routine_screening')}>
+                {moh745Data.via_villi_25_49_routine_screening}
+              </td>
+              <td onClick={() => navigateToRegister('via_villi_50_above_routine_screening')}>
+                {moh745Data.via_villi_50_above_routine_screening}
+              </td>
               <td></td>
-              <td>{moh745Data.via_villi_less_25_post_treatment_screening}</td>
-              <td>{moh745Data.via_villi_25_49_post_treatment_screening}</td>
-              <td>{moh745Data.via_villi_50_above_post_treatment_screening}</td>
+              <td onClick={() => navigateToRegister('via_villi_less_25_post_treatment_screening')}>
+                {moh745Data.via_villi_less_25_post_treatment_screening}
+              </td>
+              <td onClick={() => navigateToRegister('via_villi_25_49_post_treatment_screening')}>
+                {moh745Data.via_villi_25_49_post_treatment_screening}
+              </td>
+              <td onClick={() => navigateToRegister('via_villi_50_above_post_treatment_screening')}>
+                {moh745Data.via_villi_50_above_post_treatment_screening}
+              </td>
               <td></td>
-              <td>{moh745Data.via_villi_total}</td>
+              <td onClick={() => navigateToRegister('via_villi_total')}>{moh745Data.via_villi_total}</td>
             </tr>
             <tr>
               <td> b) Number of clients who received Pap smear</td>
-              <td>{moh745Data.pap_smear_less_25_initial_screening}</td>
-              <td>{moh745Data.pap_smear_25_49_initial_screening}</td>
-              <td>{moh745Data.pap_smear_50_above_initial_screening}</td>
+              <td onClick={() => navigateToRegister('pap_smear_less_25_initial_screening')}>
+                {moh745Data.pap_smear_less_25_initial_screening}
+              </td>
+              <td onClick={() => navigateToRegister('pap_smear_25_49_initial_screening')}>
+                {moh745Data.pap_smear_25_49_initial_screening}
+              </td>
+              <td onClick={() => navigateToRegister('pap_smear_50_above_initial_screening')}>
+                {moh745Data.pap_smear_50_above_initial_screening}
+              </td>
               <td></td>
-              <td>{moh745Data.pap_smear_less_25_routine_screening}</td>
-              <td>{moh745Data.pap_smear_25_49_routine_screening}</td>
-              <td>{moh745Data.pap_smear_50_above_routine_screening}</td>
+              <td onClick={() => navigateToRegister('pap_smear_less_25_routine_screening')}>
+                {moh745Data.pap_smear_less_25_routine_screening}
+              </td>
+              <td onClick={() => navigateToRegister('pap_smear_25_49_routine_screening')}>
+                {moh745Data.pap_smear_25_49_routine_screening}
+              </td>
+              <td onClick={() => navigateToRegister('pap_smear_50_above_routine_screening')}>
+                {moh745Data.pap_smear_50_above_routine_screening}
+              </td>
               <td></td>
-              <td>{moh745Data.pap_smear_less_25_post_treatment_screening}</td>
-              <td>{moh745Data.pap_smear_25_49_post_treatment_screening}</td>
-              <td>{moh745Data.pap_smear_50_above_post_treatment_screening}</td>
+              <td onClick={() => navigateToRegister('pap_smear_less_25_post_treatment_screening')}>
+                {moh745Data.pap_smear_less_25_post_treatment_screening}
+              </td>
+              <td onClick={() => navigateToRegister('pap_smear_25_49_post_treatment_screening')}>
+                {moh745Data.pap_smear_25_49_post_treatment_screening}
+              </td>
+              <td onClick={() => navigateToRegister('pap_smear_50_above_post_treatment_screening')}>
+                {moh745Data.pap_smear_50_above_post_treatment_screening}
+              </td>
               <td></td>
-              <td>{moh745Data.pap_smear_total}</td>
+              <td onClick={() => navigateToRegister('pap_smear_total')}>{moh745Data.pap_smear_total}</td>
             </tr>
             <tr>
               <td> c) Number of clients who received HPV Test</td>
-              <td>{moh745Data.hpv_test_less_25_initial_screening}</td>
-              <td>{moh745Data.hpv_test_25_49_initial_screening}</td>
-              <td>{moh745Data.hpv_test_50_above_initial_screening}</td>
+              <td onClick={() => navigateToRegister('hpv_test_less_25_initial_screening')}>
+                {moh745Data.hpv_test_less_25_initial_screening}
+              </td>
+              <td onClick={() => navigateToRegister('hpv_test_25_49_initial_screening')}>
+                {moh745Data.hpv_test_25_49_initial_screening}
+              </td>
+              <td onClick={() => navigateToRegister('hpv_test_50_above_initial_screening')}>
+                {moh745Data.hpv_test_50_above_initial_screening}
+              </td>
               <td></td>
-              <td>{moh745Data.hpv_test_less_25_routine_screening}</td>
-              <td>{moh745Data.hpv_test_25_49_routine_screening}</td>
-              <td>{moh745Data.hpv_test_50_above_routine_screening}</td>
+              <td onClick={() => navigateToRegister('hpv_test_less_25_routine_screening')}>
+                {moh745Data.hpv_test_less_25_routine_screening}
+              </td>
+              <td onClick={() => navigateToRegister('hpv_test_25_49_routine_screening')}>
+                {moh745Data.hpv_test_25_49_routine_screening}
+              </td>
+              <td onClick={() => navigateToRegister('hpv_test_50_above_routine_screening')}>
+                {moh745Data.hpv_test_50_above_routine_screening}
+              </td>
               <td></td>
-              <td>{moh745Data.hpv_test_less_25_post_treatment_screening}</td>
-              <td>{moh745Data.hpv_test_25_49_post_treatment_screening}</td>
-              <td>{moh745Data.hpv_test_50_above_post_treatment_screening}</td>
+              <td onClick={() => navigateToRegister('hpv_test_less_25_post_treatment_screening')}>
+                {moh745Data.hpv_test_less_25_post_treatment_screening}
+              </td>
+              <td onClick={() => navigateToRegister('hpv_test_25_49_post_treatment_screening')}>
+                {moh745Data.hpv_test_25_49_post_treatment_screening}
+              </td>
+              <td onClick={() => navigateToRegister('hpv_test_50_above_post_treatment_screening')}>
+                {moh745Data.hpv_test_50_above_post_treatment_screening}
+              </td>
               <td></td>
-              <td>{moh745Data.hpv_test_total}</td>
+              <td onClick={() => navigateToRegister('hpv_test_total')}>{moh745Data.hpv_test_total}</td>
             </tr>
             <tr>
               <td>Total Clients Screened (1 a, b &c Above)</td>
@@ -224,51 +297,109 @@ const Moh745Component: React.FC = () => {
             </tr>
             <tr>
               <td>2 a) Number of clients with Positive VIA or VIA/VILLI result</td>
-              <td>{moh745Data.positive_via_villi_less_25_initial_screening}</td>
-              <td>{moh745Data.positive_via_villi_25_49_initial_screening}</td>
-              <td>{moh745Data.positive_via_villi_50_above_initial_screening}</td>
+              <td onClick={() => navigateToRegister('positive_via_villi_less_25_initial_screening')}>
+                {moh745Data.positive_via_villi_less_25_initial_screening}
+              </td>
+              <td onClick={() => navigateToRegister('positive_via_villi_25_49_initial_screening')}>
+                {moh745Data.positive_via_villi_25_49_initial_screening}
+              </td>
+              <td onClick={() => navigateToRegister('positive_via_villi_50_above_initial_screening')}>
+                {moh745Data.positive_via_villi_50_above_initial_screening}
+              </td>
               <td></td>
-              <td>{moh745Data.positive_via_villi_less_25_routine_screening}</td>
-              <td>{moh745Data.positive_via_villi_25_49_routine_screening}</td>
-              <td>{moh745Data.positive_via_villi_50_above_routine_screening}</td>
+              <td onClick={() => navigateToRegister('positive_via_villi_less_25_routine_screening')}>
+                {moh745Data.positive_via_villi_less_25_routine_screening}
+              </td>
+              <td onClick={() => navigateToRegister('positive_via_villi_25_49_routine_screening')}>
+                {moh745Data.positive_via_villi_25_49_routine_screening}
+              </td>
+              <td onClick={() => navigateToRegister('positive_via_villi_50_above_routine_screening')}>
+                {moh745Data.positive_via_villi_50_above_routine_screening}
+              </td>
               <td></td>
-              <td>{moh745Data.positive_via_villi_less_25_post_treatment_screening}</td>
-              <td>{moh745Data.positive_via_villi_25_49_post_treatment_screening}</td>
-              <td>{moh745Data.positive_via_villi_50_above_post_treatment_screening}</td>
+              <td onClick={() => navigateToRegister('positive_via_villi_less_25_post_treatment_screening')}>
+                {moh745Data.positive_via_villi_less_25_post_treatment_screening}
+              </td>
+              <td onClick={() => navigateToRegister('positive_via_villi_25_49_post_treatment_screening')}>
+                {moh745Data.positive_via_villi_25_49_post_treatment_screening}
+              </td>
+              <td onClick={() => navigateToRegister('positive_via_villi_50_above_post_treatment_screening')}>
+                {moh745Data.positive_via_villi_50_above_post_treatment_screening}
+              </td>
               <td></td>
-              <td>{moh745Data.positive_via_villi_total}</td>
+              <td onClick={() => navigateToRegister('positive_via_villi_total')}>
+                {moh745Data.positive_via_villi_total}
+              </td>
             </tr>
             <tr>
               <td> b) Number of clients with Positive Cytology result</td>
-              <td>{moh745Data.positive_cytology_less_25_initial_screening}</td>
-              <td>{moh745Data.positive_cytology_25_49_initial_screening}</td>
-              <td>{moh745Data.positive_cytology_50_above_initial_screening}</td>
+              <td onClick={() => navigateToRegister('positive_cytology_less_25_initial_screening')}>
+                {moh745Data.positive_cytology_less_25_initial_screening}
+              </td>
+              <td onClick={() => navigateToRegister('positive_cytology_25_49_initial_screening')}>
+                {moh745Data.positive_cytology_25_49_initial_screening}
+              </td>
+              <td onClick={() => navigateToRegister('positive_cytology_50_above_initial_screening')}>
+                {moh745Data.positive_cytology_50_above_initial_screening}
+              </td>
               <td></td>
-              <td>{moh745Data.positive_cytology_less_25_routine_screening}</td>
-              <td>{moh745Data.positive_cytology_25_49_routine_screening}</td>
-              <td>{moh745Data.positive_cytology_50_above_routine_screening}</td>
+              <td onClick={() => navigateToRegister('positive_cytology_less_25_routine_screening')}>
+                {moh745Data.positive_cytology_less_25_routine_screening}
+              </td>
+              <td onClick={() => navigateToRegister('positive_cytology_25_49_routine_screening')}>
+                {moh745Data.positive_cytology_25_49_routine_screening}
+              </td>
+              <td onClick={() => navigateToRegister('positive_cytology_50_above_routine_screening')}>
+                {moh745Data.positive_cytology_50_above_routine_screening}
+              </td>
               <td></td>
-              <td>{moh745Data.positive_cytology_less_25_post_treatment_screening}</td>
-              <td>{moh745Data.positive_cytology_25_49_post_treatment_screening}</td>
-              <td>{moh745Data.positive_cytology_50_above_post_treatment_screening}</td>
+              <td onClick={() => navigateToRegister('positive_cytology_less_25_post_treatment_screening')}>
+                {moh745Data.positive_cytology_less_25_post_treatment_screening}
+              </td>
+              <td onClick={() => navigateToRegister('positive_cytology_25_49_post_treatment_screening')}>
+                {moh745Data.positive_cytology_25_49_post_treatment_screening}
+              </td>
+              <td onClick={() => navigateToRegister('positive_cytology_50_above_post_treatment_screening')}>
+                {moh745Data.positive_cytology_50_above_post_treatment_screening}
+              </td>
               <td></td>
-              <td>{moh745Data.positive_cytology_total}</td>
+              <td onClick={() => navigateToRegister('positive_cytology_total')}>
+                {moh745Data.positive_cytology_total}
+              </td>
             </tr>
             <tr>
               <td> c) Number of clients with Positive HPV result</td>
-              <td>{moh745Data.positive_hpv_less_25_initial_screening}</td>
-              <td>{moh745Data.positive_hpv_25_49_initial_screening}</td>
-              <td>{moh745Data.positive_hpv_50_above_initial_screening}</td>
+              <td onClick={() => navigateToRegister('positive_hpv_less_25_initial_screening')}>
+                {moh745Data.positive_hpv_less_25_initial_screening}
+              </td>
+              <td onClick={() => navigateToRegister('positive_hpv_25_49_initial_screening')}>
+                {moh745Data.positive_hpv_25_49_initial_screening}
+              </td>
+              <td onClick={() => navigateToRegister('positive_hpv_50_above_initial_screening')}>
+                {moh745Data.positive_hpv_50_above_initial_screening}
+              </td>
               <td></td>
-              <td>{moh745Data.positive_hpv_less_25_routine_screening}</td>
-              <td>{moh745Data.positive_hpv_25_49_routine_screening}</td>
-              <td>{moh745Data.positive_hpv_50_above_routine_screening}</td>
+              <td onClick={() => navigateToRegister('positive_hpv_less_25_routine_screening')}>
+                {moh745Data.positive_hpv_less_25_routine_screening}
+              </td>
+              <td onClick={() => navigateToRegister('positive_hpv_25_49_routine_screening')}>
+                {moh745Data.positive_hpv_25_49_routine_screening}
+              </td>
+              <td onClick={() => navigateToRegister('positive_hpv_50_above_routine_screening')}>
+                {moh745Data.positive_hpv_50_above_routine_screening}
+              </td>
               <td></td>
-              <td>{moh745Data.positive_hpv_less_25_post_treatment_screening}</td>
-              <td>{moh745Data.positive_hpv_25_49_post_treatment_screening}</td>
-              <td>{moh745Data.positive_hpv_50_above_post_treatment_screening}</td>
+              <td onClick={() => navigateToRegister('positive_hpv_less_25_post_treatment_screening')}>
+                {moh745Data.positive_hpv_less_25_post_treatment_screening}
+              </td>
+              <td onClick={() => navigateToRegister('positive_hpv_25_49_post_treatment_screening')}>
+                {moh745Data.positive_hpv_25_49_post_treatment_screening}
+              </td>
+              <td onClick={() => navigateToRegister('positive_hpv_50_above_post_treatment_screening')}>
+                {moh745Data.positive_hpv_50_above_post_treatment_screening}
+              </td>
               <td></td>
-              <td>{moh745Data.positive_hpv_total}</td>
+              <td onClick={() => navigateToRegister('positive_hpv_total')}>{moh745Data.positive_hpv_total}</td>
             </tr>
             <tr>
               <td>Total Clients Screened positive (2 a, b &c Above)</td>
@@ -288,115 +419,283 @@ const Moh745Component: React.FC = () => {
             </tr>
             <tr>
               <td>3) Number of clients with suspicios cancer lessions </td>
-              <td>{moh745Data.suspicious_cancer_lessions_less_25_initial_screening}</td>
-              <td>{moh745Data.suspicious_cancer_lessions_25_49_initial_screening}</td>
-              <td>{moh745Data.suspicious_cancer_lessions_50_above_initial_screening}</td>
+              <td onClick={() => navigateToRegister('suspicious_cancer_lessions_less_25_initial_screening')}>
+                {moh745Data.suspicious_cancer_lessions_less_25_initial_screening}
+              </td>
+              <td onClick={() => navigateToRegister('suspicious_cancer_lessions_25_49_initial_screening')}>
+                {moh745Data.suspicious_cancer_lessions_25_49_initial_screening}
+              </td>
+              <td onClick={() => navigateToRegister('suspicious_cancer_lessions_50_above_initial_screening')}>
+                {moh745Data.suspicious_cancer_lessions_50_above_initial_screening}
+              </td>
               <td>{}</td>
-              <td>{moh745Data.suspicious_cancer_lessions_less_25_routine_screening}</td>
-              <td>{moh745Data.suspicious_cancer_lessions_25_49_routine_screening}</td>
-              <td>{moh745Data.suspicious_cancer_lessions_50_above_routine_screening}</td>
+              <td onClick={() => navigateToRegister('suspicious_cancer_lessions_less_25_routine_screening')}>
+                {moh745Data.suspicious_cancer_lessions_less_25_routine_screening}
+              </td>
+              <td onClick={() => navigateToRegister('suspicious_cancer_lessions_25_49_routine_screening')}>
+                {moh745Data.suspicious_cancer_lessions_25_49_routine_screening}
+              </td>
+              <td onClick={() => navigateToRegister('suspicious_cancer_lessions_50_above_routine_screening')}>
+                {moh745Data.suspicious_cancer_lessions_50_above_routine_screening}
+              </td>
               <td>{}</td>
-              <td>{moh745Data.suspicious_cancer_lessions_less_25_post_treatment_screening}</td>
-              <td>{moh745Data.suspicious_cancer_lessions_25_49_post_treatment_screening}</td>
-              <td>{moh745Data.suspicious_cancer_lessions_50_above_post_treatment_screening}</td>
+              <td onClick={() => navigateToRegister('suspicious_cancer_lessions_less_25_post_treatment_screening')}>
+                {moh745Data.suspicious_cancer_lessions_less_25_post_treatment_screening}
+              </td>
+              <td onClick={() => navigateToRegister('suspicious_cancer_lessions_25_49_post_treatment_screening')}>
+                {moh745Data.suspicious_cancer_lessions_25_49_post_treatment_screening}
+              </td>
+              <td onClick={() => navigateToRegister('suspicious_cancer_lessions_50_above_post_treatment_screening')}>
+                {moh745Data.suspicious_cancer_lessions_50_above_post_treatment_screening}
+              </td>
               <td>{}</td>
-              <td>{moh745Data.suspicious_cancer_lessions_total}</td>
+              <td onClick={() => navigateToRegister('suspicious_cancer_lessions_total')}>
+                {moh745Data.suspicious_cancer_lessions_total}
+              </td>
             </tr>
             <tr>
               <td>4) Number of clients treated using Cryotherapy</td>
-              <td>{moh745Data.cryotherapy_treatment_less_25_initial_screening}</td>
-              <td>{moh745Data.cryotherapy_treatment_25_49_initial_screening}</td>
-              <td>{moh745Data.cryotherapy_treatment_50_above_initial_screening}</td>
+              <td onClick={() => navigateToRegister('cryotherapy_treatment_less_25_initial_screening')}>
+                {moh745Data.cryotherapy_treatment_less_25_initial_screening}
+              </td>
+              <td onClick={() => navigateToRegister('cryotherapy_treatment_25_49_initial_screening')}>
+                {moh745Data.cryotherapy_treatment_25_49_initial_screening}
+              </td>
+              <td onClick={() => navigateToRegister('cryotherapy_treatment_50_above_initial_screening')}>
+                {moh745Data.cryotherapy_treatment_50_above_initial_screening}
+              </td>
               <td>{}</td>
-              <td>{moh745Data.cryotherapy_treatment_less_25_routine_screening}</td>
-              <td>{moh745Data.cryotherapy_treatment_25_49_routine_screening}</td>
-              <td>{moh745Data.cryotherapy_treatment_50_above_routine_screening}</td>
+              <td onClick={() => navigateToRegister('cryotherapy_treatment_less_25_routine_screening')}>
+                {moh745Data.cryotherapy_treatment_less_25_routine_screening}
+              </td>
+              <td onClick={() => navigateToRegister('cryotherapy_treatment_25_49_routine_screening')}>
+                {moh745Data.cryotherapy_treatment_25_49_routine_screening}
+              </td>
+              <td onClick={() => navigateToRegister('cryotherapy_treatment_50_above_routine_screening')}>
+                {moh745Data.cryotherapy_treatment_50_above_routine_screening}
+              </td>
               <td>{}</td>
-              <td>{moh745Data.cryotherapy_treatment_less_25_post_treatment_screening}</td>
-              <td>{moh745Data.cryotherapy_treatment_25_49_post_treatment_screening}</td>
-              <td>{moh745Data.cryotherapy_treatment_50_above_post_treatment_screening}</td>
+              <td onClick={() => navigateToRegister('cryotherapy_treatment_less_25_post_treatment_screening')}>
+                {moh745Data.cryotherapy_treatment_less_25_post_treatment_screening}
+              </td>
+              <td onClick={() => navigateToRegister('cryotherapy_treatment_25_49_post_treatment_screening')}>
+                {moh745Data.cryotherapy_treatment_25_49_post_treatment_screening}
+              </td>
+              <td onClick={() => navigateToRegister('cryotherapy_treatment_50_above_post_treatment_screening')}>
+                {moh745Data.cryotherapy_treatment_50_above_post_treatment_screening}
+              </td>
               <td>{}</td>
-              <td>{moh745Data.cryotherapy_treatment_total}</td>
+              <td onClick={() => navigateToRegister('cryotherapy_treatment_total')}>
+                {moh745Data.cryotherapy_treatment_total}
+              </td>
             </tr>
             <tr>
               <td>5) Number of clients treated using Thermocoagulation</td>
-              <td>{moh745Data.thermocoagulation_treatment_less_25_initial_screening}</td>
-              <td>{moh745Data.thermocoagulation_treatment_25_49_initial_screening}</td>
-              <td>{moh745Data.thermocoagulation_treatment_50_above_initial_screening}</td>
+              <td onClick={() => navigateToRegister('thermocoagulation_treatment_less_25_initial_screening')}>
+                {moh745Data.thermocoagulation_treatment_less_25_initial_screening}
+              </td>
+              <td onClick={() => navigateToRegister('thermocoagulation_treatment_25_49_initial_screening')}>
+                {moh745Data.thermocoagulation_treatment_25_49_initial_screening}
+              </td>
+              <td onClick={() => navigateToRegister('thermocoagulation_treatment_50_above_initial_screening')}>
+                {moh745Data.thermocoagulation_treatment_50_above_initial_screening}
+              </td>
               <td>{}</td>
-              <td>{moh745Data.thermocoagulation_treatment_less_25_routine_screening}</td>
-              <td>{moh745Data.thermocoagulation_treatment_25_49_routine_screening}</td>
-              <td>{moh745Data.thermocoagulation_treatment_50_above_routine_screening}</td>
+              <td onClick={() => navigateToRegister('thermocoagulation_treatment_less_25_routine_screening')}>
+                {moh745Data.thermocoagulation_treatment_less_25_routine_screening}
+              </td>
+              <td onClick={() => navigateToRegister('thermocoagulation_treatment_25_49_routine_screening')}>
+                {moh745Data.thermocoagulation_treatment_25_49_routine_screening}
+              </td>
+              <td onClick={() => navigateToRegister('thermocoagulation_treatment_50_above_routine_screening')}>
+                {moh745Data.thermocoagulation_treatment_50_above_routine_screening}
+              </td>
               <td>{}</td>
-              <td>{moh745Data.thermocoagulation_treatment_less_25_post_treatment_screening}</td>
-              <td>{moh745Data.thermocoagulation_treatment_25_49_post_treatment_screening}</td>
-              <td>{moh745Data.thermocoagulation_treatment_50_above_post_treatment_screening}</td>
+              <td onClick={() => navigateToRegister('thermocoagulation_treatment_less_25_post_treatment_screening')}>
+                {moh745Data.thermocoagulation_treatment_less_25_post_treatment_screening}
+              </td>
+              <td onClick={() => navigateToRegister('thermocoagulation_treatment_25_49_post_treatment_screening')}>
+                {moh745Data.thermocoagulation_treatment_25_49_post_treatment_screening}
+              </td>
+              <td onClick={() => navigateToRegister('via_villi_less_25_initial_screening')}>
+                {moh745Data.thermocoagulation_treatment_50_above_post_treatment_screening}
+              </td>
               <td>{}</td>
-              <td>{moh745Data.thermocoagulation_treatment_total}</td>
+              <td onClick={() => navigateToRegister('thermocoagulation_treatment_total')}>
+                {moh745Data.thermocoagulation_treatment_total}
+              </td>
             </tr>
             <tr>
               <td>6) Number of clients treated using LEEP</td>
-              <td>{moh745Data.leep_treatment_less_25_initial_screening}</td>
-              <td>{moh745Data.leep_treatment_25_49_initial_screening}</td>
-              <td>{moh745Data.leep_treatment_50_above_initial_screening}</td>
+              <td onClick={() => navigateToRegister('leep_treatment_less_25_initial_screening')}>
+                {moh745Data.leep_treatment_less_25_initial_screening}
+              </td>
+              <td onClick={() => navigateToRegister('leep_treatment_25_49_initial_screening')}>
+                {moh745Data.leep_treatment_25_49_initial_screening}
+              </td>
+              <td onClick={() => navigateToRegister('leep_treatment_50_above_initial_screening')}>
+                {moh745Data.leep_treatment_50_above_initial_screening}
+              </td>
               <td>{}</td>
-              <td>{moh745Data.leep_treatment_less_25_routine_screening}</td>
-              <td>{moh745Data.leep_treatment_25_49_routine_screening}</td>
-              <td>{moh745Data.leep_treatment_50_above_routine_screening}</td>
+              <td onClick={() => navigateToRegister('leep_treatment_less_25_routine_screening')}>
+                {moh745Data.leep_treatment_less_25_routine_screening}
+              </td>
+              <td onClick={() => navigateToRegister('leep_treatment_25_49_routine_screening')}>
+                {moh745Data.leep_treatment_25_49_routine_screening}
+              </td>
+              <td onClick={() => navigateToRegister('leep_treatment_50_above_routine_screening')}>
+                {moh745Data.leep_treatment_50_above_routine_screening}
+              </td>
               <td>{}</td>
-              <td>{moh745Data.leep_treatment_less_25_post_treatment_screening}</td>
-              <td>{moh745Data.leep_treatment_25_49_post_treatment_screening}</td>
-              <td>{moh745Data.leep_treatment_50_above_post_treatment_screening}</td>
+              <td onClick={() => navigateToRegister('leep_treatment_less_25_post_treatment_screening')}>
+                {moh745Data.leep_treatment_less_25_post_treatment_screening}
+              </td>
+              <td onClick={() => navigateToRegister('leep_treatment_25_49_post_treatment_screening')}>
+                {moh745Data.leep_treatment_25_49_post_treatment_screening}
+              </td>
+              <td onClick={() => navigateToRegister('leep_treatment_50_above_post_treatment_screening')}>
+                {moh745Data.leep_treatment_50_above_post_treatment_screening}
+              </td>
               <td>{}</td>
-              <td>{moh745Data.leep_treatment_total}</td>
+              <td onClick={() => navigateToRegister('leep_treatment_total')}>{moh745Data.leep_treatment_total}</td>
             </tr>
             <tr>
               <td>7) Numeber of other treatment given (e.g Hysterectomy, cone)</td>
-              <td>{moh745Data.other_treatment_less_25_initial_screening}</td>
-              <td>{moh745Data.other_treatment_25_49_initial_screening}</td>
-              <td>{moh745Data.other_treatment_50_above_initial_screening}</td>
+              <td onClick={() => navigateToRegister('other_treatment_less_25_initial_screening')}>
+                {moh745Data.other_treatment_less_25_initial_screening}
+              </td>
+              <td onClick={() => navigateToRegister('other_treatment_25_49_initial_screening')}>
+                {moh745Data.other_treatment_25_49_initial_screening}
+              </td>
+              <td onClick={() => navigateToRegister('other_treatment_50_above_initial_screening')}>
+                {moh745Data.other_treatment_50_above_initial_screening}
+              </td>
               <td>{}</td>
-              <td>{moh745Data.other_treatment_less_25_routine_screening}</td>
-              <td>{moh745Data.other_treatment_25_49_routine_screening}</td>
-              <td>{moh745Data.other_treatment_50_above_routine_screening}</td>
+              <td onClick={() => navigateToRegister('other_treatment_less_25_routine_screening')}>
+                {moh745Data.other_treatment_less_25_routine_screening}
+              </td>
+              <td onClick={() => navigateToRegister('other_treatment_25_49_routine_screening')}>
+                {moh745Data.other_treatment_25_49_routine_screening}
+              </td>
+              <td onClick={() => navigateToRegister('other_treatment_50_above_routine_screening')}>
+                {moh745Data.other_treatment_50_above_routine_screening}
+              </td>
               <td>{}</td>
-              <td>{moh745Data.other_treatment_less_25_post_treatment_screening}</td>
-              <td>{moh745Data.other_treatment_25_49_post_treatment_screening}</td>
-              <td>{moh745Data.other_treatment_50_above_post_treatment_screening}</td>
+              <td onClick={() => navigateToRegister('other_treatment_less_25_post_treatment_screening')}>
+                {moh745Data.other_treatment_less_25_post_treatment_screening}
+              </td>
+              <td onClick={() => navigateToRegister('other_treatment_25_49_post_treatment_screening')}>
+                {moh745Data.other_treatment_25_49_post_treatment_screening}
+              </td>
+              <td onClick={() => navigateToRegister('other_treatment_50_above_post_treatment_screening')}>
+                {moh745Data.other_treatment_50_above_post_treatment_screening}
+              </td>
               <td>{}</td>
-              <td>{moh745Data.other_treatment_total}</td>
+              <td onClick={() => navigateToRegister('other_treatment_total')}>{moh745Data.other_treatment_total}</td>
             </tr>
             <tr>
               <td>8) Number of HIV positive clients screened</td>
-              <td>{moh745Data.hiv_positive_screened_cervical_cancer_less_25_initial_screening}</td>
-              <td>{moh745Data.hiv_positive_screened_cervical_cancer_25_49_initial_screening}</td>
-              <td>{moh745Data.hiv_positive_screened_cervical_cancer_50_above_initial_screening}</td>
+              <td onClick={() => navigateToRegister('hiv_positive_screened_cervical_cancer_less_25_initial_screening')}>
+                {moh745Data.hiv_positive_screened_cervical_cancer_less_25_initial_screening}
+              </td>
+              <td onClick={() => navigateToRegister('hiv_positive_screened_cervical_cancer_25_49_initial_screening')}>
+                {moh745Data.hiv_positive_screened_cervical_cancer_25_49_initial_screening}
+              </td>
+              <td
+                onClick={() => navigateToRegister('hiv_positive_screened_cervical_cancer_50_above_initial_screening')}
+              >
+                {moh745Data.hiv_positive_screened_cervical_cancer_50_above_initial_screening}
+              </td>
               <td>{}</td>
-              <td>{moh745Data.hiv_positive_screened_cervical_cancer_less_25_routine_screening}</td>
-              <td>{moh745Data.hiv_positive_screened_cervical_cancer_25_49_routine_screening}</td>
-              <td>{moh745Data.hiv_positive_screened_cervical_cancer_50_above_routine_screening}</td>
+              <td onClick={() => navigateToRegister('hiv_positive_screened_cervical_cancer_less_25_routine_screening')}>
+                {moh745Data.hiv_positive_screened_cervical_cancer_less_25_routine_screening}
+              </td>
+              <td onClick={() => navigateToRegister('hiv_positive_screened_cervical_cancer_25_49_routine_screening')}>
+                {moh745Data.hiv_positive_screened_cervical_cancer_25_49_routine_screening}
+              </td>
+              <td
+                onClick={() => navigateToRegister('hiv_positive_screened_cervical_cancer_50_above_routine_screening')}
+              >
+                {moh745Data.hiv_positive_screened_cervical_cancer_50_above_routine_screening}
+              </td>
               <td>{}</td>
-              <td>{moh745Data.hiv_positive_screened_cervical_cancer_less_25_post_treatment_screening}</td>
-              <td>{moh745Data.hiv_positive_screened_cervical_cancer_25_49_post_treatment_screening}</td>
-              <td>{moh745Data.hiv_positive_screened_cervical_cancer_50_above_post_treatment_screening}</td>
+              <td
+                onClick={() =>
+                  navigateToRegister('hiv_positive_screened_cervical_cancer_less_25_post_treatment_screening')
+                }
+              >
+                {moh745Data.hiv_positive_screened_cervical_cancer_less_25_post_treatment_screening}
+              </td>
+              <td
+                onClick={() =>
+                  navigateToRegister('hiv_positive_screened_cervical_cancer_25_49_post_treatment_screening')
+                }
+              >
+                {moh745Data.hiv_positive_screened_cervical_cancer_25_49_post_treatment_screening}
+              </td>
+              <td
+                onClick={() =>
+                  navigateToRegister('hiv_positive_screened_cervical_cancer_50_above_post_treatment_screening')
+                }
+              >
+                {moh745Data.hiv_positive_screened_cervical_cancer_50_above_post_treatment_screening}
+              </td>
               <td>{}</td>
-              <td>{moh745Data.hiv_positive_screened_cervical_cancer_total}</td>
+              <td onClick={() => navigateToRegister('hiv_positive_screened_cervical_cancer_total')}>
+                {moh745Data.hiv_positive_screened_cervical_cancer_total}
+              </td>
             </tr>
             <tr>
               <td>9) Number of HIV positive with positive screening</td>
-              <td>{moh745Data.hiv_positive_cervical_cancer_positive_less_25_initial_screening}</td>
-              <td>{moh745Data.hiv_positive_cervical_cancer_positive_25_49_initial_screening}</td>
-              <td>{moh745Data.hiv_positive_cervical_cancer_positive_50_above_initial_screening}</td>
+              <td onClick={() => navigateToRegister('hiv_positive_cervical_cancer_positive_less_25_initial_screening')}>
+                {moh745Data.hiv_positive_cervical_cancer_positive_less_25_initial_screening}
+              </td>
+              <td onClick={() => navigateToRegister('hiv_positive_cervical_cancer_positive_25_49_initial_screening')}>
+                {moh745Data.hiv_positive_cervical_cancer_positive_25_49_initial_screening}
+              </td>
+              <td
+                onClick={() => navigateToRegister('hiv_positive_cervical_cancer_positive_50_above_initial_screening')}
+              >
+                {moh745Data.hiv_positive_cervical_cancer_positive_50_above_initial_screening}
+              </td>
               <td>{}</td>
-              <td>{moh745Data.hiv_positive_cervical_cancer_positive_less_25_routine_screening}</td>
-              <td>{moh745Data.hiv_positive_cervical_cancer_positive_25_49_routine_screening}</td>
-              <td>{moh745Data.hiv_positive_cervical_cancer_positive_50_above_routine_screening}</td>
+              <td onClick={() => navigateToRegister('hiv_positive_cervical_cancer_positive_less_25_routine_screening')}>
+                {moh745Data.hiv_positive_cervical_cancer_positive_less_25_routine_screening}
+              </td>
+              <td onClick={() => navigateToRegister('hiv_positive_cervical_cancer_positive_25_49_routine_screening')}>
+                {moh745Data.hiv_positive_cervical_cancer_positive_25_49_routine_screening}
+              </td>
+              <td
+                onClick={() => navigateToRegister('hiv_positive_cervical_cancer_positive_50_above_routine_screening')}
+              >
+                {moh745Data.hiv_positive_cervical_cancer_positive_50_above_routine_screening}
+              </td>
               <td>{}</td>
-              <td>{moh745Data.hiv_positive_cervical_cancer_positive_less_25_post_treatment_screening}</td>
-              <td>{moh745Data.hiv_positive_cervical_cancer_positive_25_49_post_treatment_screening}</td>
-              <td>{moh745Data.hiv_positive_cervical_cancer_positive_50_above_post_treatment_screening}</td>
+              <td
+                onClick={() =>
+                  navigateToRegister('hiv_positive_cervical_cancer_positive_less_25_post_treatment_screening')
+                }
+              >
+                {moh745Data.hiv_positive_cervical_cancer_positive_less_25_post_treatment_screening}
+              </td>
+              <td
+                onClick={() =>
+                  navigateToRegister('hiv_positive_cervical_cancer_positive_25_49_post_treatment_screening')
+                }
+              >
+                {moh745Data.hiv_positive_cervical_cancer_positive_25_49_post_treatment_screening}
+              </td>
+              <td
+                onClick={() =>
+                  navigateToRegister('hiv_positive_cervical_cancer_positive_50_above_post_treatment_screening')
+                }
+              >
+                {moh745Data.hiv_positive_cervical_cancer_positive_50_above_post_treatment_screening}
+              </td>
               <td>{}</td>
-              <td>{moh745Data.hiv_positive_cervical_cancer_positive_total}</td>
+              <td onClick={() => navigateToRegister('hiv_positive_cervical_cancer_positive_total')}>
+                {moh745Data.hiv_positive_cervical_cancer_positive_total}
+              </td>
             </tr>
           </tbody>
         </table>
