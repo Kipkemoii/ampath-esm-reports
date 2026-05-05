@@ -102,11 +102,7 @@ const ANCComponent: React.FC<ANCComponentProps> = ({ moh711Data, startDate, endD
           <tr>
             <td>13</td>
             <td>Positive (+ve)</td>
-            <td>
-              {' '}
-              onClick={() => navigateToRegister('syphilis_positive')}
-              {moh711Data.syphilis_positive}
-            </td>
+            <td onClick={() => navigateToRegister('syphilis_positive')}> {moh711Data.syphilis_positive}</td>
           </tr>
           <tr>
             <td>14</td>
