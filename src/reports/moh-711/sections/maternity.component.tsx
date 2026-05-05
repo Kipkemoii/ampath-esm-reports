@@ -2,12 +2,23 @@ import React from 'react';
 
 import styles from '../moh711.scss';
 import classNames from 'classnames';
+import { useNavigate } from 'react-router-dom';
 
 interface MaternityComponentProps {
   moh711Data: any;
+  startDate: string;
+  endDate: string;
+  locationUuids: string;
 }
 
-const MaternityComponent: React.FC<MaternityComponentProps> = ({ moh711Data }) => {
+const MaternityComponent: React.FC<MaternityComponentProps> = ({ moh711Data, startDate, endDate, locationUuids }) => {
+  const navigate = useNavigate();
+  const navigateToRegister = (indicator: string) => {
+    navigate(
+      `/moh-333-register?startDate=${startDate}&endDate=${endDate}&locationUuids=${locationUuids}&indicator=${indicator}`,
+    );
+  };
+
   return (
     <>
       <table className={classNames(`${styles.table}`, `${styles.tableBordered}`, `${styles.tableStriped}`)}>
@@ -21,22 +32,24 @@ const MaternityComponent: React.FC<MaternityComponentProps> = ({ moh711Data }) =
           <tr>
             <td>1</td>
             <td colSpan={2}>Normal Deliveries</td>
-            <td>{moh711Data.normal_deliveries}</td>
+            <td onClick={() => navigateToRegister('normal_deliveries')}>{moh711Data.normal_deliveries}</td>
           </tr>
           <tr>
             <td>2</td>
             <td colSpan={2}>Caesarean Sections</td>
-            <td>{moh711Data.caesarian_sections}</td>
+            <td onClick={() => navigateToRegister('caesarian_sections')}>{moh711Data.caesarian_sections}</td>
           </tr>
           <tr>
             <td>3</td>
             <td colSpan={2}>Breach Delivery</td>
-            <td>{moh711Data.breach_delivery}</td>
+            <td onClick={() => navigateToRegister('breach_delivery')}>{moh711Data.breach_delivery}</td>
           </tr>
           <tr>
             <td>4</td>
             <td colSpan={2}>Assisted Vaginal Deliveries(Vacuum Extraction)</td>
-            <td>{moh711Data.assisted_vaginal_delivery}</td>
+            <td onClick={() => navigateToRegister('assisted_vaginal_delivery')}>
+              {moh711Data.assisted_vaginal_delivery}
+            </td>
           </tr>
           <tr>
             <td></td>
@@ -56,119 +69,137 @@ const MaternityComponent: React.FC<MaternityComponentProps> = ({ moh711Data }) =
             <td rowSpan={2}>5</td>
             <td rowSpan={2}>No. of mothers given uterotonics within 1 minute</td>
             <td>Oxytocin</td>
-            <td>{moh711Data.oxytocin_uterotonic}</td>
+            <td onClick={() => navigateToRegister('oxytocin_uterotonic')}>{moh711Data.oxytocin_uterotonic}</td>
           </tr>
           <tr>
             <td>Carbatosin</td>
-            <td>{moh711Data.carbatocin_uterotonic}</td>
+            <td onClick={() => navigateToRegister('carbatocin_uterotonic')}>{moh711Data.carbatocin_uterotonic}</td>
           </tr>
           <tr>
             <td>6</td>
             <td colSpan={2}>Live Births</td>
-            <td>{moh711Data.live_birth}</td>
+            <td onClick={() => navigateToRegister('live_birth')}>{moh711Data.live_birth}</td>
           </tr>
           <tr>
             <td>7</td>
             <td colSpan={2}>No. of Low Birth Weight Babies (below 2500gms)</td>
-            <td>{moh711Data.low_birth_weight}</td>
+            <td onClick={() => navigateToRegister('low_birth_weight')}>{moh711Data.low_birth_weight}</td>
           </tr>
           <tr>
             <td>8</td>
             <td colSpan={2}>
               No. of Low APGAR Score(<strong>&le; 6 at 5 Min</strong>)
             </td>
-            <td>{moh711Data.low_apgar_score}</td>
+            <td onClick={() => navigateToRegister('low_apgar_score')}>{moh711Data.low_apgar_score}</td>
           </tr>
           <tr>
             <td>9</td>
             <td colSpan={2}>No. of Birth with diformities</td>
-            <td>{moh711Data.birth_with_deformity}</td>
+            <td onClick={() => navigateToRegister('birth_with_deformity')}>{moh711Data.birth_with_deformity}</td>
           </tr>
           <tr>
             <td>10</td>
             <td colSpan={2}>No. of Babies applied chlorhexidine for cord care</td>
-            <td>{moh711Data.chlorhexidine_applied}</td>
+            <td onClick={() => navigateToRegister('chlorhexidine_applied')}>{moh711Data.chlorhexidine_applied}</td>
           </tr>
           <tr>
             <td>11</td>
             <td colSpan={2}>No. of Neonates given Vit "K"</td>
-            <td>{moh711Data.vitamin_k}</td>
+            <td onClick={() => navigateToRegister('vitamin_k')}>{moh711Data.vitamin_k}</td>
           </tr>
           <tr>
             <td>12</td>
             <td colSpan={2}>No. of Babies given tetracycline at birth</td>
-            <td>{moh711Data.tetracycline_given}</td>
+            <td onClick={() => navigateToRegister('tetracycline_given')}>{moh711Data.tetracycline_given}</td>
           </tr>
           <tr>
             <td>13</td>
             <td colSpan={2}>Pre-Term babies</td>
-            <td>{moh711Data.pre_term_babies}</td>
+            <td onClick={() => navigateToRegister('pre_term_babies')}>{moh711Data.pre_term_babies}</td>
           </tr>
           <tr>
             <td>14</td>
             <td colSpan={2}>No. of Babies discharge Alive</td>
-            <td>{moh711Data.discharge_alive}</td>
+            <td onClick={() => navigateToRegister('discharge_alive')}>{moh711Data.discharge_alive}</td>
           </tr>
           <tr>
             <td>15</td>
             <td colSpan={2}>No. of Infants initiated on breast feeding within 1 hour after birth</td>
-            <td>{moh711Data.bf_within_1_hour}</td>
+            <td onClick={() => navigateToRegister('bf_within_1_hour')}>{moh711Data.bf_within_1_hour}</td>
           </tr>
           <tr>
             <td>16</td>
             <td colSpan={2}>Total Deliveries from HIV +ve Women</td>
-            <td>{moh711Data.deliveries_from_positive_women}</td>
+            <td onClick={() => navigateToRegister('deliveries_from_positive_women')}>
+              {moh711Data.deliveries_from_positive_women}
+            </td>
           </tr>
           <tr>
             <td>17</td>
             <td rowSpan={3}>Perinatal Deaths</td>
             <td>Fresh Still Birth</td>
-            <td>{moh711Data.fresh_still_birth}</td>
+            <td onClick={() => navigateToRegister('fresh_still_birth')}>{moh711Data.fresh_still_birth}</td>
           </tr>
           <tr>
             <td>18</td>
             <td>Macerated still Birth</td>
-            <td>{moh711Data.macerated_still_birth}</td>
+            <td onClick={() => navigateToRegister('macerated_still_birth')}>{moh711Data.macerated_still_birth}</td>
           </tr>
           <tr>
             <td>19</td>
             <td>Deaths 0-7 days</td>
-            <td>{moh711Data.perinatal_deaths_0_7_days}</td>
+            <td onClick={() => navigateToRegister('perinatal_deaths_0_7_days')}>
+              {moh711Data.perinatal_deaths_0_7_days}
+            </td>
           </tr>
           <tr>
             <td>20</td>
             <td colSpan={2}>Neonatal deaths 0-28 Days</td>
-            <td>{moh711Data.neonatal_deaths_0_28_days}</td>
+            <td onClick={() => navigateToRegister('neonatal_deaths_0_28_days')}>
+              {moh711Data.neonatal_deaths_0_28_days}
+            </td>
           </tr>
           <tr>
             <td>21</td>
             <td colSpan={2}>Maternal deaths 10-14 Years</td>
-            <td>{moh711Data.maternal_deaths_10_14_years}</td>
+            <td onClick={() => navigateToRegister('maternal_deaths_10_14_years')}>
+              {moh711Data.maternal_deaths_10_14_years}
+            </td>
           </tr>
           <tr>
             <td>22</td>
             <td colSpan={2}>Maternal deaths 15-19 Years</td>
-            <td>{moh711Data.maternal_deaths_15_19_years}</td>
+            <td onClick={() => navigateToRegister('maternal_deaths_15_19_years')}>
+              {moh711Data.maternal_deaths_15_19_years}
+            </td>
           </tr>
           <tr>
             <td>23</td>
             <td colSpan={2}>Maternal deaths 20-24 Years</td>
-            <td>{moh711Data.maternal_deaths_20_24_years}</td>
+            <td onClick={() => navigateToRegister('maternal_deaths_20_24_years')}>
+              {moh711Data.maternal_deaths_20_24_years}
+            </td>
           </tr>
           <tr>
             <td>24</td>
             <td colSpan={2}>Maternal deaths 25+ Years</td>
-            <td>{moh711Data.maternal_deaths_25_above_years}</td>
+            <td onClick={() => navigateToRegister('maternal_deaths_25_above_years')}>
+              {moh711Data.maternal_deaths_25_above_years}
+            </td>
           </tr>
           <tr>
             <td>25</td>
             <td colSpan={2}>Maternal Deaths Audited Within 7 Days</td>
-            <td>{moh711Data.maternal_deaths_audited_within_7_days}</td>
+            <td onClick={() => navigateToRegister('maternal_deaths_audited_within_7_days')}>
+              {moh711Data.maternal_deaths_audited_within_7_days}
+            </td>
           </tr>
           <tr>
             <td>26</td>
             <td colSpan={2}>No. of Neonatal deaths audited within 7 days</td>
-            <td>{moh711Data.neonatal_deaths_audited_within_7_days}</td>
+            <td onClick={() => navigateToRegister('neonatal_deaths_audited_within_7_days')}>
+              {moh711Data.neonatal_deaths_audited_within_7_days}
+            </td>
           </tr>
         </tbody>
       </table>
@@ -185,42 +216,42 @@ const MaternityComponent: React.FC<MaternityComponentProps> = ({ moh711Data }) =
           <tr>
             <td>27</td>
             <td>A.P.H (Ante partum Haemorrage)</td>
-            <td>{moh711Data.ante_partum_haemorrage}</td>
+            <td onClick={() => navigateToRegister('ante_partum_haemorrage')}>{moh711Data.ante_partum_haemorrage}</td>
             <td></td>
             <td></td>
           </tr>
           <tr>
             <td>28</td>
             <td>P.P.H (Post Partum Haemorrage)</td>
-            <td>{moh711Data.post_partum_haemorrage}</td>
+            <td onClick={() => navigateToRegister('post_partum_haemorrage')}>{moh711Data.post_partum_haemorrage}</td>
             <td></td>
             <td></td>
           </tr>
           <tr>
             <td>29</td>
             <td>Eclampsia</td>
-            <td>{moh711Data.eclampsia}</td>
+            <td onClick={() => navigateToRegister('eclampsia')}>{moh711Data.eclampsia}</td>
             <td></td>
             <td></td>
           </tr>
           <tr>
             <td>30</td>
             <td>Ruptured Uterus</td>
-            <td>{moh711Data.ruptured_uterus}</td>
+            <td onClick={() => navigateToRegister('ruptured_uterus')}>{moh711Data.ruptured_uterus}</td>
             <td></td>
             <td></td>
           </tr>
           <tr>
             <td>31</td>
             <td>Obstructed Labour</td>
-            <td>{moh711Data.obstructed_labour}</td>
+            <td onClick={() => navigateToRegister('obstructed_labour')}>{moh711Data.obstructed_labour}</td>
             <td></td>
             <td></td>
           </tr>
           <tr>
             <td>32</td>
             <td>Sepsis</td>
-            <td>{moh711Data.sepsis}</td>
+            <td onClick={() => navigateToRegister('sepsis')}>{moh711Data.sepsis}</td>
             <td></td>
             <td></td>
           </tr>
@@ -230,7 +261,9 @@ const MaternityComponent: React.FC<MaternityComponentProps> = ({ moh711Data }) =
               Number of Mothers with delivery complications associated
               <br /> with FGM
             </td>
-            <td>{moh711Data.fgm_delivery_complications}</td>
+            <td onClick={() => navigateToRegister('fgm_delivery_complications')}>
+              {moh711Data.fgm_delivery_complications}
+            </td>
             <td></td>
             <td></td>
           </tr>
@@ -249,27 +282,33 @@ const MaternityComponent: React.FC<MaternityComponentProps> = ({ moh711Data }) =
             <td>34</td>
             <td rowSpan={3}>Causes of neonatal deaths</td>
             <td>No. of neonatal deaths due to Sepsis</td>
-            <td>{moh711Data.neonatal_deaths_sepsis}</td>
+            <td onClick={() => navigateToRegister('neonatal_deaths_sepsis')}>{moh711Data.neonatal_deaths_sepsis}</td>
           </tr>
           <tr>
             <td>35</td>
             <td>No. of neonatal deaths due to Prematurity</td>
-            <td>{moh711Data.neonatal_deaths_prematurity}</td>
+            <td onClick={() => navigateToRegister('neonatal_deaths_prematurity')}>
+              {moh711Data.neonatal_deaths_prematurity}
+            </td>
           </tr>
           <tr>
             <td>36</td>
             <td>No. of neonatal deaths due to Asphyxia</td>
-            <td>{moh711Data.neonatal_deaths_asphyxia}</td>
+            <td onClick={() => navigateToRegister('neonatal_deaths_asphyxia')}>
+              {moh711Data.neonatal_deaths_asphyxia}
+            </td>
           </tr>
           <tr>
             <td>37</td>
             <td colSpan={2}>No. of Neonates initiated on Kangaroo Mother Care</td>
-            <td>{moh711Data.kangaroo_mother_care}</td>
+            <td onClick={() => navigateToRegister('kangaroo_mother_care')}>{moh711Data.kangaroo_mother_care}</td>
           </tr>
           <tr>
             <td>38</td>
             <td colSpan={2}>Maternal Referrals From Community Unit</td>
-            <td>{moh711Data.referrals_from_community}</td>
+            <td onClick={() => navigateToRegister('referrals_from_community')}>
+              {moh711Data.referrals_from_community}
+            </td>
           </tr>
         </tbody>
       </table>

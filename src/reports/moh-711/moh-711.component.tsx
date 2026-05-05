@@ -20,18 +20,20 @@ import MedicalSocialWorkComponent from './sections/medical-social-work.component
 import PhysiotherapyComponent from './sections/physiotherapy.component';
 import OtherComponent from './sections/other.component';
 import ReportCompiledByComponent from './sections/report-compiled-by.component';
+import { type ReportFilters } from '../moh-705a/type';
 
 const Moh711Report: React.FC = () => {
   let errorMessage: string = '';
   const [moh711Data, setMoh711Data] = useState<any>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
 
   const session = useSession();
   const locationUuid = session?.sessionLocation?.uuid;
-  const fetchMoh711ReportData = async (filters: { startDate?: string; endDate?: string; month?: string }) => {
-    setIsLoading(true);
-    let startDate = filters.startDate;
-    let endDate = filters.endDate;
+
+  const getReportParams = (filters: ReportFilters) => {
+    let { startDate: sDate, endDate: eDate } = filters;
 
     if (filters.month) {
       const [year, monthIndex] = filters.month.split('-').map(Number);
@@ -40,15 +42,26 @@ const Moh711Report: React.FC = () => {
       const end = new Date(year, monthIndex, 0);
 
       const formatLocalDate = (d: Date) => {
-        const year = d.getFullYear();
-        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
         const day = String(d.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
+        return `${y}-${m}-${day}`;
       };
 
-      startDate = formatLocalDate(start);
-      endDate = formatLocalDate(end);
+      sDate = formatLocalDate(start);
+      eDate = formatLocalDate(end);
     }
+
+    setStartDate(sDate || '');
+    setEndDate(eDate || '');
+
+    return { startDate: sDate, endDate: eDate };
+  };
+
+  const fetchMoh711ReportData = async (filters: { startDate?: string; endDate?: string; month?: string }) => {
+    setIsLoading(true);
+
+    const { startDate, endDate } = getReportParams(filters);
 
     const params = {
       locationUuids: locationUuid || '',
@@ -96,17 +109,22 @@ const Moh711Report: React.FC = () => {
       </h5>
       <div className={styles.container}>
         <div className={styles.left}>
-          <ANCComponent moh711Data={moh711Data} />
+          <ANCComponent moh711Data={moh711Data} startDate={startDate} endDate={endDate} locationUuids={locationUuid!} />
           <GBVComponent moh711Data={moh711Data} />
           <FamilyPlanningComponent moh711Data={moh711Data} />
           <CervicalCancerComponent moh711Data={moh711Data} />
-          <PNCComponent moh711Data={moh711Data} />
+          <PNCComponent moh711Data={moh711Data} startDate={startDate} endDate={endDate} locationUuids={locationUuid!} />
           <RehabilitationComponent moh711Data={moh711Data} />
           <MedicalSocialWorkComponent moh711Data={moh711Data} />
           <ReportCompiledByComponent />
         </div>
         <div className={styles.right}>
-          <MaternityComponent moh711Data={moh711Data} />
+          <MaternityComponent
+            moh711Data={moh711Data}
+            startDate={startDate}
+            endDate={endDate}
+            locationUuids={locationUuid!}
+          />
           <PostAbortion moh711Data={moh711Data} />
           <ChanisComponent moh711Data={moh711Data} />
           <PhysiotherapyComponent moh711Data={moh711Data} />
