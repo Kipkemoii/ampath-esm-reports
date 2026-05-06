@@ -1,4 +1,4 @@
-import { Button, Table, TableBody, TableHead, TableHeader, TableRow } from '@carbon/react';
+import { Button, Loading, Table, TableBody, TableHead, TableHeader, TableRow } from '@carbon/react';
 import React, { useEffect, useState } from 'react';
 
 import styles from '../moh-745.scss';
@@ -54,6 +54,7 @@ const Moh412Register: React.FC = () => {
       <div className={styles.buttonContainer}>
         <Button onClick={navigateBack}>Back</Button>
       </div>
+      <div>{isLoading && <Loading />}</div>
       <div className={styles.tableContainer}>
         <Table className={classNames(`${styles.table}`, `${styles.tableBordered}`, `${styles.tableStriped}`)}>
           <TableHead>
