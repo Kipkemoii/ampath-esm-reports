@@ -173,7 +173,7 @@ const Moh412Register: React.FC = () => {
               patientlist.map((patient, index) => (
                 <TableRow key={index}>
                   {moh412Columns.map((col) => (
-                    <td key={col}>{patient?.[col] ?? '-'}</td>
+                    <td key={col}>{patient?.[col] ?? ''}</td>
                   ))}
                 </TableRow>
               ))

@@ -35,7 +35,7 @@ const Moh333Register: React.FC = () => {
 
         const data = await getMoh333PatientList(params);
 
-        setPatientList(data?.result || []);
+        setPatientList(data?.results.results || []);
       } catch (error) {
         console.error('Failed to fetch register data', error);
       } finally {
