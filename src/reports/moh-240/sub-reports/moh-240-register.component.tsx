@@ -1,6 +1,6 @@
 import React from "react";
 import DatatableWrapper from "../../datatable-wrapper/datatable-wrapper.component";
-
+import styles from "../moh-240.scss";
 interface Moh240RegisterProps {
     patientList?: any[];
     indicator?: string;
@@ -52,9 +52,9 @@ const Moh240Register: React.FC<Moh240RegisterProps> = ({ patientList = [], indic
 
     const resultField = getResultField(indicator);
 
-    const subHeaders = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z', 'AA'];
+    const subHeaders = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA'];
 
-    const rows = patientList.map(patient => {
+    const rows = patientList.map((patient, index) => {
         const row: any = {};
         headers.forEach(header => {
             if (header.key === 'results') {
@@ -62,11 +62,14 @@ const Moh240Register: React.FC<Moh240RegisterProps> = ({ patientList = [], indic
             } else {
                 row[header.key] = patient[header.key] || '';
             }
+            row["id"] = header.key + index;
         });
         return row;
     });
 
-    return <DatatableWrapper headers={headers} rows={rows} subHeaders={subHeaders}/>
+    return <div className={styles.wrapper}>
+        <DatatableWrapper headers={headers} rows={rows} subHeaders={subHeaders} />
+    </div>
 }
 
 export default Moh240Register;

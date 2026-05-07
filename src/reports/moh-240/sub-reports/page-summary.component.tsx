@@ -2,6 +2,7 @@ import React, { useMemo } from "react";
 import TableWrapper from "../../table-wrapper/table-wrapper.component";
 import TableRowMapper from "../../table-wrapper/table-row-mapper.component";
 import { getCell } from "../../../utils/utils";
+import styles from "../moh-240.scss";
 
 const Moh240PageSummary: React.FC = () => {
     const tableRows = useMemo(() => {
@@ -87,9 +88,11 @@ const Moh240PageSummary: React.FC = () => {
     }, []);
 
 
-    return <TableWrapper>
-        <TableRowMapper tableRows={tableRows} />
-    </TableWrapper>
+    return <div className={styles.wrapper}>
+        <TableWrapper>
+            <TableRowMapper tableRows={tableRows} />
+        </TableWrapper>
+    </div>
 }
 
 export default Moh240PageSummary;

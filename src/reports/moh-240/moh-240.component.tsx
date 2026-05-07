@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Loading } from '@carbon/react';
+import { Button, Loading } from '@carbon/react';
 import Moh240Register from "./sub-reports/moh-240-register.component";
 import Moh240PageSummary from "./sub-reports/page-summary.component";
 import { getMoh706PatientList } from "../../resources/moh-706.resource";
 import { getMoh505PatientList } from "../../resources/moh-505.resource";
 import MOH240Header from "./moh-240-header.component";
+import styles from "./moh-240.scss";
+import { navigate } from "@openmrs/esm-framework";
 
 const Moh240Report: React.FC = () => {
     const [searchParams] = useSearchParams();
@@ -45,8 +47,24 @@ const Moh240Report: React.FC = () => {
         }
     };
 
+    const navigateBack = () => {
+        const report = searchParams.get('report');
+        const locationUuids = searchParams.get('locationUuids');
+        const startDate = searchParams.get('startDate');
+        const endDate = searchParams.get('endDate');
+
+        const params = new URLSearchParams();
+        if (locationUuids) params.append('locationUuids', locationUuids);
+        if (startDate) params.append('startDate', startDate);
+        if (endDate) params.append('endDate', endDate);
+        navigate({ to: `home/reports/${report}?${params.toString()}` });
+    }
+
     return (
         <>
+            <div className={styles.buttonContainer}>
+                <Button onClick={navigateBack}>Back</Button>
+            </div>
             {isLoading && <Loading description="Fetching patient list...." />}
             {!isLoading && errorMessage && (
                 <div>

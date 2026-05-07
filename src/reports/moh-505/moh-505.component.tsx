@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSession } from '@openmrs/esm-framework';
 import { Loading } from '@carbon/react';
 import TableWrapper from '../table-wrapper/table-wrapper.component';
@@ -7,6 +7,7 @@ import { getCell } from '../../utils/utils';
 import ReportFiltersComponent from '../../common/report-filters/report-filters.component';
 import { getMoh505 } from '../../resources/moh-505.resource';
 import MOH505Header from './moh-505-header.component';
+import { useSearchParams } from 'react-router-dom';
 
 const Moh505Report: React.FC = () => {
   const [moh505Data, setMoh505Data] = useState<any>({});
@@ -16,6 +17,18 @@ const Moh505Report: React.FC = () => {
 
   const session = useSession();
   const locationUuids = session?.sessionLocation?.uuid;
+
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const startDate = searchParams.get('startDate');
+    const endDate = searchParams.get('endDate');
+
+    if (startDate && endDate) {
+      setFilters({ locationUuids, startDate, endDate });
+      fetchMoh505Data({ startDate, endDate });
+    }
+  }, [searchParams]);
 
   const fetchMoh505Data = async (filters: { startDate?: string; endDate?: string; month?: string }) => {
     setErrorMessage('');
