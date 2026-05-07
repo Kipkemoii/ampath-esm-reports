@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSession } from '@openmrs/esm-framework';
 import { Column, Grid, Loading } from '@carbon/react';
 import UrineAnalysis from './sub-reports/urine-analysis/urine-analysis.component';
@@ -14,6 +14,7 @@ import ReportFiltersComponent from '../../common/report-filters/report-filters.c
 import { getMoh706 } from '../../resources/moh-706.resource';
 import styles from './moh-706.scss';
 import MOH706Header from './moh-706-header.component';
+import { useSearchParams } from 'react-router-dom';
 
 const MoH706Report: React.FC = () => {
   const [moh706Data, setMoh706Data] = useState<any>({});
@@ -23,6 +24,18 @@ const MoH706Report: React.FC = () => {
 
   const session = useSession();
   const locationUuids = session?.sessionLocation?.uuid;
+
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    const startDate = searchParams.get('startDate');
+    const endDate = searchParams.get('endDate');
+
+    if (startDate && endDate) {
+      setFilters({ locationUuids, startDate, endDate });
+      fetchMoh706Data({ startDate, endDate });
+    }
+  }, [searchParams]);
 
   const fetchMoh706Data = async (filters: { startDate?: string; endDate?: string; month?: string }) => {
     setErrorMessage('');

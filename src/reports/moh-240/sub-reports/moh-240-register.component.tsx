@@ -1,6 +1,6 @@
 import React from "react";
 import DatatableWrapper from "../../datatable-wrapper/datatable-wrapper.component";
-
+import styles from "../moh-240.scss";
 interface Moh240RegisterProps {
     patientList?: any[];
     indicator?: string;
@@ -67,7 +67,9 @@ const Moh240Register: React.FC<Moh240RegisterProps> = ({ patientList = [], indic
         return row;
     });
 
-    return <DatatableWrapper headers={headers} rows={rows} subHeaders={subHeaders} />
+    return <div className={styles.wrapper}>
+        <DatatableWrapper headers={headers} rows={rows} subHeaders={subHeaders} />
+    </div>
 }
 
 export default Moh240Register;
