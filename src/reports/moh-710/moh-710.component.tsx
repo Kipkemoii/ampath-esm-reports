@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import { useSession } from '@openmrs/esm-framework';
 import { getMoh710 } from '../../resources/moh-710.resource';
 import { Loading } from '@carbon/react';
+import { type ReportFilters } from '../moh-705a/type';
 
 const Moh710Report: React.FC = () => {
   let errorMessage: string = '';
@@ -14,13 +15,14 @@ const Moh710Report: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
+
   const session = useSession();
   const locationUuids = session?.sessionLocation?.uuid;
 
-  const fetchMoh710ReportData = async (filters: { startDate?: string; endDate?: string; month?: string }) => {
-    setIsLoading(true);
-    let startDate = filters.startDate;
-    let endDate = filters.endDate;
+  const getReportParams = (filters: ReportFilters) => {
+    let { startDate: sDate, endDate: eDate } = filters;
 
     if (filters.month) {
       const [year, monthIndex] = filters.month.split('-').map(Number);
@@ -29,15 +31,26 @@ const Moh710Report: React.FC = () => {
       const end = new Date(year, monthIndex, 0);
 
       const formatLocalDate = (d: Date) => {
-        const year = d.getFullYear();
-        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
         const day = String(d.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
+        return `${y}-${m}-${day}`;
       };
 
-      startDate = formatLocalDate(start);
-      endDate = formatLocalDate(end);
+      sDate = formatLocalDate(start);
+      eDate = formatLocalDate(end);
     }
+
+    setStartDate(sDate || '');
+    setEndDate(eDate || '');
+
+    return { startDate: sDate, endDate: eDate };
+  };
+
+  const fetchMoh710ReportData = async (filters: { startDate?: string; endDate?: string; month?: string }) => {
+    setIsLoading(true);
+
+    const { startDate, endDate } = getReportParams(filters);
 
     const params = {
       locationUuids: locationUuids || '',
@@ -54,6 +67,12 @@ const Moh710Report: React.FC = () => {
       setIsLoading(false);
       throw new Error(`Failed to fetch MOH-710 report data: ${error instanceof Error ? error.message : String(error)}`);
     }
+  };
+
+  const navigateToRegister = (indicator: string) => {
+    navigate(
+      `/moh-405-register?startDate=${startDate}&endDate=${endDate}&locationUuids=${locationUuids}&indicator=${indicator}`,
+    );
   };
   return (
     <>

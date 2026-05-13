@@ -3,7 +3,7 @@ import { Button, Loading, Table, TableBody, TableCell, TableHead, TableHeader, T
 
 import styles from '../moh-705a.scss';
 import classNames from 'classnames';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { getMoh705aPatientList } from '../../../resources/moh-705.resource';
 
 interface Moh204ARegisterComponentProps {}
@@ -13,13 +13,14 @@ const Moh204ARegisterComponent: React.FC<Moh204ARegisterComponentProps> = () => 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const startDate = searchParams.get('startDate');
   const endDate = searchParams.get('endDate');
   const locationUuids = searchParams.get('locationUuids');
   const indicator = searchParams.get('indicator');
 
   function navigateBack() {
-    navigate('/moh-705a');
+    navigate(location.state?.from || '/moh-705b');
   }
 
   useEffect(() => {

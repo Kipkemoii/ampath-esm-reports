@@ -5,6 +5,7 @@ interface Moh710Params {
   locationUuids: string;
   startDate?: string;
   endDate?: string;
+  indicator?: string | string[];
 }
 
 export async function getMoh710(params: Moh710Params): Promise<any> {
@@ -40,6 +41,7 @@ export async function getMoh710PatientList(params: Moh710Params): Promise<any> {
     locationUuids: params.locationUuids || '',
     startDate: params.startDate || '',
     endDate: params.endDate || '',
+    indicator: Array.isArray(params.indicator) ? params.indicator.join(',') : params.indicator || '',
   };
   const queryString = new URLSearchParams(
     Object.fromEntries(Object.entries(queryparams).filter(([_, v]) => v !== undefined && v !== null)),

@@ -1,0 +1,117 @@
+.table {
+  border: 2px solid #000;
+  margin: 2rem;
+  table-layout: fixed;
+
+  td:nth-child(1) {
+  width: 40%;
+}
+
+td:nth-child(2) {
+  width: 25%;
+}
+
+td:nth-child(3) {
+  width: 27.5%;
+}
+
+tr {
+  display: flex;
+  justify-content: space-between;
+}
+
+span {
+  font-weight: normal;
+}
+
+
+}
+
+
+.locationContainer {
+  border: 2px solid #000;
+  width: 100%;
+  text-align: center;
+  margin: 2rem;
+}
+
+.border {
+  background-color: #f2f2f2;
+  border-bottom: 2px solid #000;
+  width: 100%;
+  font-weight: bold;
+}
+.border2 {
+  background-color: #f2f2f2;
+  border-top: 2px solid #000;
+  border-bottom: 2px solid #000;
+  width: 100%;
+  font-weight: bold;
+}
+
+.border3 {
+  border-top: 2px solid #000;
+  border-right: 2px dotted #000;
+  width: 78.5%;
+}
+
+.flexColumn {
+  display: inline-block;
+  flex-direction: column;
+  margin: 2rem;
+}
+
+.flexRow {
+  display: flex;
+  justify-content: space-between;
+}
+.rectangle {
+  width: 50px;
+  height: 20px;
+  border: 2px solid #000;
+  display: inline-block;
+  margin-left: 5px;
+}
+.textBox {
+  display: inline-block;
+  align-items: center;
+  justify-content: start;
+  gap: 8px;
+  white-space: nowrap;
+}
+.textBox2 {
+  margin-left: 10px;
+}
+.spaceAfter {
+  padding-right: 6vw;
+}
+.borderRight {
+  border-right: 2px dotted #000;
+  padding-right: 4vw;
+}
+.borderLeft {
+  border-left: 2px dotted #000;
+  padding-left: 1vw;
+}
+
+.reviewSection {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  column-gap: 20px;
+  text-align: center;
+  font-size: 14px;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.subTitle {
+  font-weight: bold;
+}
+
+
+.emptyColumn {
+  min-width: 10rem;
+}
+
+
+

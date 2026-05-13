@@ -5,7 +5,7 @@ interface Moh711Params {
   locationUuids: string;
   startDate?: string;
   endDate?: string;
-  indicator?: string;
+  indicator?: string | string[];
 }
 
 export async function getMoh711(params: Moh711Params): Promise<any> {
@@ -41,7 +41,7 @@ export async function getMoh406PatientList(params: Moh711Params): Promise<any> {
     locationUuids: params.locationUuids || '',
     startDate: params.startDate || '',
     endDate: params.endDate || '',
-    indicator: params.indicator || '',
+    indicator: Array.isArray(params.indicator) ? params.indicator.join(',') : params.indicator || '',
     limit: '300',
   };
   const queryString = new URLSearchParams(
@@ -69,7 +69,7 @@ export async function getMoh405PatientList(params: Moh711Params): Promise<any> {
     locationUuids: params.locationUuids || '',
     startDate: params.startDate || '',
     endDate: params.endDate || '',
-    indicator: params.indicator || '',
+    indicator: Array.isArray(params.indicator) ? params.indicator.join(',') : params.indicator || '',
     limit: '300',
   };
   const queryString = new URLSearchParams(
@@ -97,7 +97,7 @@ export async function getMoh333PatientList(params: Moh711Params): Promise<any> {
     locationUuids: params.locationUuids || '',
     startDate: params.startDate || '',
     endDate: params.endDate || '',
-    indicator: params.indicator || '',
+    indicator: Array.isArray(params.indicator) ? params.indicator.join(',') : params.indicator || '',
     limit: '300',
   };
   const queryString = new URLSearchParams(
@@ -125,7 +125,7 @@ export async function getMoh510PatientList(params: Moh711Params): Promise<any> {
     locationUuids: params.locationUuids || '',
     startDate: params.startDate || '',
     endDate: params.endDate || '',
-    indicator: params.indicator || '',
+    indicator: Array.isArray(params.indicator) ? params.indicator.join(',') : params.indicator || '',
     limit: '300',
   };
   const queryString = new URLSearchParams(
@@ -153,7 +153,7 @@ export async function getMoh511PatientList(params: Moh711Params): Promise<any> {
     locationUuids: params.locationUuids || '',
     startDate: params.startDate || '',
     endDate: params.endDate || '',
-    indicator: params.indicator || '',
+    indicator: Array.isArray(params.indicator) ? params.indicator.join(',') : params.indicator || '',
     limit: '300',
   };
   const queryString = new URLSearchParams(
