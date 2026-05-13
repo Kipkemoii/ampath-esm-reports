@@ -11,7 +11,6 @@ import Moh705BComponent from './reports/moh-705B/moh-705b.component';
 import Moh705AComponent from './reports/moh-705a/moh-705a.component';
 import Moh745Component from './reports/moh-745/moh-745.component';
 import Moh740Report from './reports/moh-740/moh-740.component';
-import Moh710PatientList from './reports/moh-710/patient-list/moh-710-patient-list.component';
 import Moh204ARegisterComponent from './reports/moh-705a/registers/moh-204a-register.component';
 import Moh204BRegisterComponent from './reports/moh-705B/moh-204b-register.component';
 import Moh412Register from './reports/moh-745/registers/moh-412-register.component';
@@ -20,6 +19,9 @@ import Moh406Register from './reports/moh-711/registers/moh-406-register.compone
 import Moh333Register from './reports/moh-711/registers/moh-333-register.component';
 import Moh511Register from './reports/moh-711/registers/moh-511-register.component';
 import Moh510Register from './reports/moh-711/registers/moh-510-register.component';
+import Moh511710Register from './reports/moh-710/registers/moh-511-710-register.component';
+import Moh731Report from './reports/moh-731/moh-731.component';
+import Moh366Register from './reports/moh-731/registers/moh-366.component';
 
 const RootComponent: React.FC = () => {
   const baseName = window.getOpenmrsSpaBase() + 'home/reports';
@@ -47,6 +49,9 @@ const RootComponent: React.FC = () => {
         <Route path="/moh-511-register" element={<Moh511Register />} />
         <Route path="/moh-510-register" element={<Moh510Register />} />
         <Route path="/moh-412-register" element={<Moh412Register />} />
+        <Route path="/moh-511-710-register" element={<Moh511710Register />} />
+        <Route path="/moh-731" element={<Moh731Report />} />
+        <Route path="/moh-366-register" element={<Moh366Register />} />
       </Routes>
     </BrowserRouter>
   );

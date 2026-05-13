@@ -2,11 +2,11 @@ import { Button, Loading, Table, TableBody, TableHead, TableHeader, TableRow } f
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
-import styles from '../moh711.scss';
+import styles from '../moh-710.scss';
 import { getMoh511PatientList } from '../../../resources/moh-711.resource';
 import { moh511Columns } from './type';
 
-const Moh511Register: React.FC = () => {
+const Moh511710Register: React.FC = () => {
   const navigate = useNavigate();
   const [patientlist, setPatientList] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -46,7 +46,7 @@ const Moh511Register: React.FC = () => {
   }, [startDate, endDate, locationUuids, indicator]);
 
   function navigateBack() {
-    navigate('/moh-711');
+    navigate('/moh-710');
   }
   return (
     <>
@@ -260,4 +260,4 @@ const Moh511Register: React.FC = () => {
   );
 };
 
-export default Moh511Register;
+export default Moh511710Register;

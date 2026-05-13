@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 
 import styles from './moh-705b.scss';
 import classNames from 'classnames';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { getMoh705bPatientList } from '../../resources/moh-705.resource';
 
 const Moh204BRegisterComponent: React.FC = () => {
@@ -11,6 +11,7 @@ const Moh204BRegisterComponent: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const startDate = searchParams.get('startDate');
   const endDate = searchParams.get('endDate');
   const locationUuids = searchParams.get('locationUuids');
@@ -43,7 +44,7 @@ const Moh204BRegisterComponent: React.FC = () => {
   }, [startDate, endDate, locationUuids, indicator]);
 
   function navigateBack() {
-    navigate('/moh-705b');
+    navigate(location.state?.from || '/moh-705b');
   }
 
   return (

@@ -58,7 +58,9 @@ const ReportFiltersComponent: React.FC<ReportFiltersComponentProps> = ({
   return (
     <>
       <div className={styles.titleContainer}>
-        <ArrowLeft className={styles.backIcon} onClick={() => navigate('/')} />
+        <Button className={styles.backIcon} onClick={() => navigate('/')}>
+          Back
+        </Button>
         <h2 className={styles.title}>{reportName}</h2>
       </div>
       <div className={styles.filtersContainer}>

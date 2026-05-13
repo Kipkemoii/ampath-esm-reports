@@ -126,7 +126,12 @@ const Moh717Report: React.FC = () => {
       </div>
       <div className={styles.container}>
         <div className={styles.section}>
-          <OutpatientComponent moh717ReportData={moh717ReportData} />
+          <OutpatientComponent
+            moh717ReportData={moh717ReportData}
+            startDate={startDate}
+            endDate={endDate}
+            locationUuids={locationUuid!}
+          />
         </div>
         <InpatientComponent moh717ReportData={moh717ReportData} />
         <div className={styles.sectionContainer}>

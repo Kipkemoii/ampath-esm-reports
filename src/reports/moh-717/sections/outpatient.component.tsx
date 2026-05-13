@@ -2,12 +2,33 @@ import React from 'react';
 
 import styles from '../moh717.scss';
 import classNames from 'classnames';
+import { useNavigate } from 'react-router-dom';
 
 interface OutpatientComponentProps {
   moh717ReportData: any;
+  startDate: string;
+  endDate: string;
+  locationUuids: string;
 }
 
-const OutpatientComponent: React.FC<OutpatientComponentProps> = ({ moh717ReportData }) => {
+const OutpatientComponent: React.FC<OutpatientComponentProps> = ({
+  moh717ReportData,
+  startDate,
+  endDate,
+  locationUuids,
+}) => {
+  const navigate = useNavigate();
+
+  const navigateTo204ARegister = (indicator: string | string[]) => {
+    navigate(
+      `/moh-204a-register?startDate=${startDate}&endDate=${endDate}&locationUuids=${locationUuids}&indicator=${indicator}`,
+    );
+  };
+  const navigateTo204BRegister = (indicator: string | string[]) => {
+    navigate(
+      `/moh-204b-register?startDate=${startDate}&endDate=${endDate}&locationUuids=${locationUuids}&indicator=${indicator}`,
+    );
+  };
   return (
     <>
       <table className={classNames(`${styles.table}`, `${styles.tableBordered}`, `${styles.tableStriped}`)}>
@@ -30,9 +51,20 @@ const OutpatientComponent: React.FC<OutpatientComponentProps> = ({ moh717ReportD
           <tr>
             <td>A.1.1</td>
             <td>Over 5 - Male</td>
-            <td>{moh717ReportData.opd_attendance_greater_5yrs_male_new}</td>
-            <td>{moh717ReportData.opd_attendance_greater_5yrs_male_revisit}</td>
-            <td>
+            <td onClick={() => navigateTo204BRegister('opd_attendance_greater_5yrs_male_new')}>
+              {moh717ReportData.opd_attendance_greater_5yrs_male_new}
+            </td>
+            <td onClick={() => navigateTo204BRegister('opd_attendance_greater_5yrs_male_revisit')}>
+              {moh717ReportData.opd_attendance_greater_5yrs_male_revisit}
+            </td>
+            <td
+              onClick={() =>
+                navigateTo204BRegister([
+                  'opd_attendance_greater_5yrs_male_new',
+                  'opd_attendance_greater_5yrs_male_revisit',
+                ])
+              }
+            >
               {(moh717ReportData.opd_attendance_greater_5yrs_male_new || 0) +
                 (moh717ReportData.opd_attendance_greater_5yrs_male_revisit || 0)}
             </td>
@@ -40,9 +72,20 @@ const OutpatientComponent: React.FC<OutpatientComponentProps> = ({ moh717ReportD
           <tr>
             <td>A.1.2</td>
             <td>Over 5 - Female</td>
-            <td>{moh717ReportData.opd_attendance_greater_5yrs_female_new}</td>
-            <td>{moh717ReportData.opd_attendance_greater_5yrs_female_revisit}</td>
-            <td>
+            <td onClick={() => navigateTo204BRegister('opd_attendance_greater_5yrs_female_new')}>
+              {moh717ReportData.opd_attendance_greater_5yrs_female_new}
+            </td>
+            <td onClick={() => navigateTo204BRegister('opd_attendance_greater_5yrs_female_revisit')}>
+              {moh717ReportData.opd_attendance_greater_5yrs_female_revisit}
+            </td>
+            <td
+              onClick={() =>
+                navigateTo204BRegister([
+                  'opd_attendance_greater_5yrs_female_new',
+                  'opd_attendance_greater_5yrs_female_revisit',
+                ])
+              }
+            >
               {(moh717ReportData.opd_attendance_greater_5yrs_female_new || 0) +
                 (moh717ReportData.opd_attendance_greater_5yrs_female_revisit || 0)}
             </td>
@@ -50,9 +93,17 @@ const OutpatientComponent: React.FC<OutpatientComponentProps> = ({ moh717ReportD
           <tr>
             <td>A.1.3</td>
             <td>Children Under 5 - Male</td>
-            <td>{moh717ReportData.opd_attendance_less_5yrs_male_new}</td>
-            <td>{moh717ReportData.opd_attendance_less_5yrs_male_revisit}</td>
-            <td>
+            <td onClick={() => navigateTo204ARegister('opd_attendance_less_5yrs_male_new')}>
+              {moh717ReportData.opd_attendance_less_5yrs_male_new}
+            </td>
+            <td onClick={() => navigateTo204ARegister('opd_attendance_less_5yrs_male_revisit')}>
+              {moh717ReportData.opd_attendance_less_5yrs_male_revisit}
+            </td>
+            <td
+              onClick={() =>
+                navigateTo204ARegister(['opd_attendance_less_5yrs_male_new', 'opd_attendance_less_5yrs_male_revisit'])
+              }
+            >
               {(moh717ReportData.opd_attendance_less_5yrs_male_new || 0) +
                 (moh717ReportData.opd_attendance_less_5yrs_male_revisit || 0)}
             </td>
@@ -60,9 +111,20 @@ const OutpatientComponent: React.FC<OutpatientComponentProps> = ({ moh717ReportD
           <tr>
             <td>A.1.4</td>
             <td>Children Under 5 - Female</td>
-            <td>{moh717ReportData.opd_attendance_less_5yrs_female_new}</td>
-            <td>{moh717ReportData.opd_attendance_less_5yrs_female_revisit}</td>
-            <td>
+            <td onClick={() => navigateTo204ARegister('opd_attendance_less_5yrs_female_new')}>
+              {moh717ReportData.opd_attendance_less_5yrs_female_new}
+            </td>
+            <td onClick={() => navigateTo204ARegister('opd_attendance_less_5yrs_female_revisit')}>
+              {moh717ReportData.opd_attendance_less_5yrs_female_revisit}
+            </td>
+            <td
+              onClick={() =>
+                navigateTo204ARegister([
+                  'opd_attendance_less_5yrs_female_new',
+                  'opd_attendance_less_5yrs_female_revisit',
+                ])
+              }
+            >
               {(moh717ReportData.opd_attendance_less_5yrs_female_new || 0) +
                 (moh717ReportData.opd_attendance_less_5yrs_female_revisit || 0)}
             </td>
@@ -70,9 +132,13 @@ const OutpatientComponent: React.FC<OutpatientComponentProps> = ({ moh717ReportD
           <tr>
             <td>A.1.5</td>
             <td>Over 60 years</td>
-            <td>{moh717ReportData.over_60_years_new}</td>
-            <td>{moh717ReportData.over_60_years_revisit}</td>
-            <td>{(moh717ReportData.over_60_years_new || 0) + (moh717ReportData.over_60_years_revisit || 0)}</td>
+            <td onClick={() => navigateTo204BRegister('over_60_years_new')}>{moh717ReportData.over_60_years_new}</td>
+            <td onClick={() => navigateTo204BRegister('over_60_years_revisit')}>
+              {moh717ReportData.over_60_years_revisit}
+            </td>
+            <td onClick={() => navigateTo204ARegister(['over_60_years_new', 'over_60_years_revisit'])}>
+              {(moh717ReportData.over_60_years_new || 0) + (moh717ReportData.over_60_years_revisit || 0)}
+            </td>
           </tr>
           <tr>
             <td className={styles.totals}>A.1.5</td>
